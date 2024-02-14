@@ -72,7 +72,7 @@ const UserForm = ({ id, navigation }) => {
           />
         </Form.Group>
         <Form.Group className="mb-3">
-          <Form.Label Label>Last Name</Form.Label>
+          <Form.Label>Last Name</Form.Label>
           <Form.Control
             type="text"
             name="last_name"
@@ -82,7 +82,7 @@ const UserForm = ({ id, navigation }) => {
           />
         </Form.Group>
         <Form.Group className="mb-3">
-          <Form.Label Label>Email</Form.Label>
+          <Form.Label>Email</Form.Label>
           <Form.Control
             type="email"
             name="email"
