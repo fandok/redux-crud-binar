@@ -1,65 +1,64 @@
-import { Component } from "react";
+import { useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import User from "./User";
 
-class UserContainer extends Component {
-  state = {
-    users: [],
-  };
+const UserContainer = () => {
+  const [users, setUsers] = useState([]);
 
-  componentDidMount() {
-    fetch("https://reqres.in/api/users", { method: "GET" })
-      .then((response) => response.json())
-      .then((dataResponse) => {
-        this.setState({
-          users: dataResponse.data,
+  useEffect(() => {
+    const fetchData = () => {
+      fetch("https://reqres.in/api/users", { method: "GET" })
+        .then((response) => response.json())
+        .then((dataResponse) => {
+          // convert dari setState ke setUsers
+          //   this.setState({
+          //     users: dataResponse.data,
+          //   });
+
+          setUsers(dataResponse.data);
         });
-      });
-  }
+    };
 
-  deleteUser(id) {
+    fetchData();
+  }, []);
+
+  const deleteUser = (id) => {
     fetch(`https://reqres.in/api/users/${id}`, { method: "DELETE" }).then(() =>
       console.log("Data user berhasil dihapus"),
     );
-  }
+  };
 
-  createCard = (userProps) => (
-    <Col xs={4}>
-      <User
-        {...userProps}
-        onDelete={this.deleteUser.bind(this, userProps.id)}
-      />
+  const createCard = (userProps) => (
+    <Col key={userProps.key} xs={4}>
+      <User {...userProps} onDelete={() => deleteUser(userProps.id)} />
     </Col>
   );
 
-  createRow = (rows) => (
+  const createRow = (rows) => (
     <Row key={`${Math.random()}+${Date.now()}`}>
-      {rows.map((i) => this.createCard(Object.assign(i, { key: i.id })))}
+      {rows.map((card) => createCard({ ...card, key: card.id }))}
     </Row>
   );
 
-  render() {
-    const { users } = this.state;
-    const contents = [];
-    for (let i = 0; i < users.length; i += 3) {
-      contents.push(users.slice(i, i + 3));
-    }
-
-    return (
-      <Container fluid className="p-4">
-        <Row className="text-end mb-1">
-          <Col>
-            <Link to="/add">
-              <Button variant="light">+ Tambah</Button>
-            </Link>
-          </Col>
-        </Row>
-        {contents.map((i) => this.createRow(i))}
-      </Container>
-    );
+  const contents = [];
+  for (let i = 0; i < users.length; i += 3) {
+    contents.push(users.slice(i, i + 3));
   }
-}
+
+  return (
+    <Container fluid className="p-4">
+      <Row className="text-end mb-1">
+        <Col>
+          <Link to="/add">
+            <Button variant="light">+ Tambah</Button>
+          </Link>
+        </Col>
+      </Row>
+      {contents.map((i) => createRow(i))}
+    </Container>
+  );
+};
 
 export default UserContainer;
